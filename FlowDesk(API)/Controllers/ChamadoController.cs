@@ -36,14 +36,16 @@ namespace FlowDesk_API_.Controllers
         [HttpGet("listaChamado")]
         public IActionResult ListarChamados()
         {
-            return Ok();
+            var listaChamados = _service.ListarChamados();
+            return Ok(listaChamados);
         }
 
         [Authorize]
         [HttpGet("{id}/listarporid")]
-        public IActionResult ListarChamadoPorId()
+        public IActionResult ListarChamadoPorId(Guid id)
         {
-            return Ok();
+            var chamado = _service.ListarChamadoPorId(id);
+            return Ok(chamado);
         }
 
         [Authorize(Roles = "Gestor,Tecnico,Administrador")]
@@ -55,22 +57,25 @@ namespace FlowDesk_API_.Controllers
 
         [Authorize(Roles = "Gestor")]
         [HttpPatch("{id}/atribuir")]
-        public IActionResult AtribuirTecnico()
+        public IActionResult AtribuirTecnico(AlterarChamadoDto dto, Guid id)
         {
-            return Ok();
+            var atribuirTecnico = _service.AtribuirTecnico(dto, id);
+            return Ok(atribuirTecnico);
         }
 
         [Authorize(Roles = "Gestor")]
         [HttpPatch("{id}/status")]
-        public IActionResult GerenciarStatus()
+        public IActionResult AlterarStatus(AlterarChamadoDto dto, Guid id)
         {
+            var alterarStatus = _service.AlterarStatus(dto, id);
             return NoContent();
         }
 
         [Authorize(Roles = "Gestor, Tecnico")]
         [HttpDelete("{id}")]
-        public IActionResult DeletarChamado()
+        public IActionResult DeletarChamado(Guid id)
         {
+            var chamado = _service.DeletarChamado(id);
             return NoContent();
         }
     }

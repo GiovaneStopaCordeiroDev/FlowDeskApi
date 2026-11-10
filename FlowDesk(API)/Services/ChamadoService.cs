@@ -61,6 +61,31 @@ namespace FlowDesk_API_.Services
             };
         }
 
+        public async Task<LerChamadoDto> AtribuirComentario(Guid id)
+        {
+            Chamado chamado = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == id);
+
+            if (chamado == null)
+            {
+                throw new Exception("Chamado nullo");
+            }
+
+            return new LerChamadoDto
+            {
+                Id = chamado.Id,
+                Titulo = chamado.Titulo,
+                Descricao = chamado.Descricao,
+                PrioridadeChamado = chamado.PrioridadeChamado,
+                Comentarios = chamado.Comentarios.Select(c => new LerComentarioDto
+                {
+                    Id = c.Id,
+                    AutorId = c.AutorId,
+                    ConteudoComentario = c.ConteudoComentario,
+                    CriadoEmUtc = c.CriadoEmUtc
+                }).ToList()
+            };
+        }
+
         public async Task DeletarChamado(Guid id)
         {
             Chamado chamado = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == id);

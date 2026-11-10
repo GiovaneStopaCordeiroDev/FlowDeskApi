@@ -1,4 +1,5 @@
 ﻿using FlowDesk_API_.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlowDesk_API_.Controllers
@@ -14,6 +15,7 @@ namespace FlowDesk_API_.Controllers
             _usuarioService = usuarioService;
         }
 
+        [Authorize(Roles = "Administrador")]
         [HttpPost("atribuir-perfil")]
         public async Task<IActionResult> AtribuirPerfil(string id, string perfil)
         {

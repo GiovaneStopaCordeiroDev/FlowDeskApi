@@ -13,9 +13,10 @@ namespace FlowDesk_API_.Modelos
         public string ?TecnicoResponsavelId { get; set; }
         public string Titulo { get; set; }
         public string Descricao { get; set; }
+        public ICollection<Comentario> Comentarios { get; set; } = new List<Comentario>();
         public DateTimeOffset CriadoEmUtc { get; set; }
-        public PrioridadeChamado PrioridadeChamado;
-        public StatusChamado StatusChamado;
+        public PrioridadeChamado PrioridadeChamado { get; set; }
+        public StatusChamado StatusChamado { get; set; }
 
 
 

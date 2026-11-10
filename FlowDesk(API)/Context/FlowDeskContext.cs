@@ -14,5 +14,6 @@ namespace FlowDesk_API_.Context
 
         public DbSet<Chamado> Chamados { get; set; }
         public DbSet<Empresa> Empresas { get; set; }
+        public DbSet<Comentario> Comentarios { get; set; }
     }
 }

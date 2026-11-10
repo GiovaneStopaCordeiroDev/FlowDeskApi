@@ -10,6 +10,7 @@ namespace FlowDesk_API_.Dtos
         public string TecnicoResponsavelId { get; set; }
         public string Titulo { get; set; }
         public string Descricao { get; set; }
-        public PrioridadeChamado PrioridadeChamado;
+        public PrioridadeChamado PrioridadeChamado { get; set; }
+        public ICollection<LerComentarioDto> Comentarios { get; set; } = new List<LerComentarioDto>();
     }
 }
