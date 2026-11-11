@@ -2,7 +2,7 @@
 {
     public class AtribuirPerfilDto
     {
-        string Perfil { get; set; }
+        public string Perfil { get; set; } = string.Empty;
 
     }
 }

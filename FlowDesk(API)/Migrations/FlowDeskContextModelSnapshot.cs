@@ -42,6 +42,12 @@ namespace FlowDesk_API_.Migrations
                     b.Property<Guid>("EmpresaId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("PrioridadeChamado")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StatusChamado")
+                        .HasColumnType("integer");
+
                     b.Property<string>("TecnicoResponsavelId")
                         .HasColumnType("text");
 
@@ -52,6 +58,35 @@ namespace FlowDesk_API_.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Chamados");
+                });
+
+            modelBuilder.Entity("FlowDesk_API_.Modelos.Comentario", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("AutorId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("ChamadoId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ConteudoComentario")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTimeOffset>("CriadoEmUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AutorId");
+
+                    b.HasIndex("ChamadoId");
+
+                    b.ToTable("Comentarios");
                 });
 
             modelBuilder.Entity("FlowDesk_API_.Modelos.Empresa", b =>
@@ -66,6 +101,9 @@ namespace FlowDesk_API_.Migrations
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -122,10 +160,6 @@ namespace FlowDesk_API_.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("SecurityStamp")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Senha")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("StatusUsuario")
@@ -284,6 +318,25 @@ namespace FlowDesk_API_.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("FlowDesk_API_.Modelos.Comentario", b =>
+                {
+                    b.HasOne("FlowDesk_API_.Modelos.Usuario", "Autor")
+                        .WithMany()
+                        .HasForeignKey("AutorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("FlowDesk_API_.Modelos.Chamado", "Chamado")
+                        .WithMany("Comentarios")
+                        .HasForeignKey("ChamadoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Autor");
+
+                    b.Navigation("Chamado");
+                });
+
             modelBuilder.Entity("FlowDesk_API_.Modelos.Usuario", b =>
                 {
                     b.HasOne("FlowDesk_API_.Modelos.Empresa", "Empresa")
@@ -342,6 +395,11 @@ namespace FlowDesk_API_.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FlowDesk_API_.Modelos.Chamado", b =>
+                {
+                    b.Navigation("Comentarios");
                 });
 
             modelBuilder.Entity("FlowDesk_API_.Modelos.Empresa", b =>

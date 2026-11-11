@@ -27,8 +27,9 @@ namespace FlowDesk_API_.Controllers
 
         [Authorize(Roles = "Gestor, Tecnico")]
         [HttpPost("adicionaComentario")]
-        public IActionResult AdicionarComentario()
+        public IActionResult AtribuirComentario(CriarComentarioDto dto, Guid id)
         {
+            var comentario = _service.AtribuirComentario(dto, id);
             return Created();
         }
 
@@ -46,13 +47,6 @@ namespace FlowDesk_API_.Controllers
         {
             var chamado = _service.ListarChamadoPorId(id);
             return Ok(chamado);
-        }
-
-        [Authorize(Roles = "Gestor,Tecnico,Administrador")]
-        [HttpGet("listaHistorico")]
-        public IActionResult ListarHistorico()
-        {
-            return Ok();
         }
 
         [Authorize(Roles = "Gestor")]

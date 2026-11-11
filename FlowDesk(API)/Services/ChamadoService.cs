@@ -45,7 +45,7 @@ namespace FlowDesk_API_.Services
 
         public async Task<LerChamadoDto> ListarChamadoPorId(Guid id)
         {
-            Chamado chamado = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == id);
+            Chamado? chamado = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == id);
 
             if(chamado == null)
             {
@@ -61,14 +61,22 @@ namespace FlowDesk_API_.Services
             };
         }
 
-        public async Task<LerChamadoDto> AtribuirComentario(Guid id)
+        public async Task<LerChamadoDto> AtribuirComentario(CriarComentarioDto dto, Guid id)
         {
-            Chamado chamado = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == id);
+            Chamado? chamado = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == id);
 
             if (chamado == null)
             {
                 throw new Exception("Chamado nullo");
             }
+            var novoComentario = new Comentario
+            {
+                Id = Guid.NewGuid(),
+                AutorId = dto.AutorId,
+                ConteudoComentario = dto.ConteudoComentario,
+                CriadoEmUtc = DateTimeOffset.UtcNow
+            };
+            chamado.Comentarios.Add(novoComentario);
 
             return new LerChamadoDto
             {
@@ -88,7 +96,7 @@ namespace FlowDesk_API_.Services
 
         public async Task DeletarChamado(Guid id)
         {
-            Chamado chamado = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == id);
+            Chamado? chamado = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == id);
             if (chamado == null)
             {
                 throw new Exception("Não foi possivel encontrar o chamado");
@@ -103,7 +111,7 @@ namespace FlowDesk_API_.Services
 
         public async Task<LerChamadoDto> AlterarStatus(AlterarChamadoDto dto, Guid id)
         {
-            Chamado chamado = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == id);
+            Chamado? chamado = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == id);
             if (chamado == null)
             {
                 throw new Exception("Não foi possivel encontrar o chamado");
@@ -125,7 +133,7 @@ namespace FlowDesk_API_.Services
 
         public async Task<LerChamadoDto> AtribuirTecnico(AlterarChamadoDto dto, Guid id)
         {
-            Chamado chamado = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == id);
+            Chamado? chamado = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == id);
 
             if(chamado == null)
             {

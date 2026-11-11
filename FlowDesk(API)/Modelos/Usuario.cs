@@ -9,7 +9,7 @@ namespace FlowDesk_API_.Modelos
     }
     public class Usuario : IdentityUser
     {
-        public string Nome { get; set; }
+        public string Nome { get; set; } = string.Empty;
         public Guid ?EmpresaId { get; set; }
         public Empresa ?Empresa { get; set; }
         public StatusUsuario StatusUsuario { get; set; } = StatusUsuario.Ativo;

@@ -6,10 +6,10 @@ namespace FlowDesk_API_.Dtos
     public class CriarUsuarioDto
     {
         [Required(ErrorMessage ="Adicione o nome de usuário para o cadastro")]
-        public string Nome { get; set; }
+        public string Nome { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Adicione sua senha de usuário para o cadastro")]
-        public string Senha { get; set; }
+        public string Senha { get; set; } = string.Empty;
     }
 
 }
