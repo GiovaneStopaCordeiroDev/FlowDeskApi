@@ -7,11 +7,11 @@ namespace FlowDesk_API_.Controllers
 {
     [ApiController]
     [Route("api/v1/empresa")]
-    public class EmpresaControler : ControllerBase
+    public class EmpresaController : ControllerBase
     {
 
         private EmpresaService _empresaService;
-        public EmpresaControler(EmpresaService empresaService)
+        public EmpresaController(EmpresaService empresaService)
         {
             _empresaService = empresaService;
         }

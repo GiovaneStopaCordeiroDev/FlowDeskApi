@@ -1,4 +1,5 @@
 ﻿using FlowDesk_API_.Modelos;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -9,14 +10,27 @@ namespace FlowDesk_API_.Services
     public class TokenService
     {
 
+        private UserManager<Usuario> _userManager;
+        public TokenService(UserManager<Usuario> userManager)
+        {
+            _userManager = userManager;
+        }
+
         public string GenerateToken(Usuario usuario)
         {
+            var roles = _userManager.GetRolesAsync(usuario).Result;
             Claim[] claims = new Claim[]
             {
                 new Claim("username", usuario.Nome),
                 new Claim("id", usuario.Id),
-          
-        };
+
+                
+            };
+
+            foreach (var role in roles)
+            {
+                new Claim(ClaimTypes.Role, role);
+            }
 
             var chave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("eif349fre9ifr39i544y3f43h43eud4fr38934f9ir9"));
 

@@ -21,53 +21,60 @@ namespace FlowDesk_API_.Controllers
         [HttpPost("publicaChamado")]
         public async Task<IActionResult> PublicarChamado(CriarChamadoDto dto)
         {
-            await _service.PublicarChamado(dto);
+            var chamado = await _service.PublicarChamado(dto);
             return Created();
         }
 
         [Authorize(Roles = "Gestor, Tecnico")]
         [HttpPost("adicionaComentario")]
-        public IActionResult AtribuirComentario(CriarComentarioDto dto, Guid id)
+        public async Task<IActionResult> AtribuirComentario(CriarComentarioDto dto, Guid id)
         {
-            var comentario = _service.AtribuirComentario(dto, id);
+            var comentario = await _service.AtribuirComentario(dto, id);
             return Created();
         }
 
         [Authorize]
         [HttpGet("listaChamado")]
-        public IActionResult ListarChamados()
+        public async Task<IActionResult> ListarChamados()
         {
-            var listaChamados = _service.ListarChamados();
+            var listaChamados = await _service.ListarChamados();
             return Ok(listaChamados);
         }
 
         [Authorize]
-        [HttpGet("{id}/listarporid")]
-        public IActionResult ListarChamadoPorId(Guid id)
+        [HttpGet("listaChamadoPorEmpresa")]
+        public async Task<IActionResult> ListarChamadosPorEmpresa()
         {
-            var chamado = _service.ListarChamadoPorId(id);
+            return Ok();
+        }
+
+        [Authorize]
+        [HttpGet("{id}/listarporid")]
+        public async Task<IActionResult> ListarChamadoPorId(Guid id)
+        {
+            var chamado = await _service.ListarChamadoPorId(id);
             return Ok(chamado);
         }
 
         [Authorize(Roles = "Gestor")]
         [HttpPatch("{id}/atribuir")]
-        public IActionResult AtribuirTecnico(AlterarChamadoDto dto, Guid id)
+        public async Task<IActionResult> AtribuirTecnico(AlterarChamadoDto dto, Guid id)
         {
-            var atribuirTecnico = _service.AtribuirTecnico(dto, id);
+            var atribuirTecnico = await _service.AtribuirTecnico(dto, id);
             return Ok(atribuirTecnico);
         }
 
         [Authorize(Roles = "Gestor")]
         [HttpPatch("{id}/status")]
-        public IActionResult AlterarStatus(AlterarChamadoDto dto, Guid id)
+        public async Task<IActionResult> AlterarStatus(AlterarChamadoDto dto, Guid id)
         {
-            var alterarStatus = _service.AlterarStatus(dto, id);
+            var alterarStatus = await _service.AlterarStatus(dto, id);
             return NoContent();
         }
 
         [Authorize(Roles = "Gestor, Tecnico")]
         [HttpDelete("{id}")]
-        public IActionResult DeletarChamado(Guid id)
+        public async Task<IActionResult> DeletarChamado(Guid id)
         {
             var chamado = _service.DeletarChamado(id);
             return NoContent();

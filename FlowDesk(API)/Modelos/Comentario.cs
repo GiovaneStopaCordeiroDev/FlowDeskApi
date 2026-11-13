@@ -6,7 +6,7 @@
         public string ConteudoComentario { get; set; } = string.Empty;
 
         public Guid ChamadoId { get; set; }
-        public required Chamado Chamado { get; set; }
+        public  Chamado Chamado { get; set; }
 
         public string AutorId { get; set; } = string.Empty;
         public Usuario Autor { get; set; } = null!;

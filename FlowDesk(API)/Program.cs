@@ -81,6 +81,7 @@ builder.Services.AddScoped<ChamadoService>();
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<TokenService>();
 builder.Services.AddScoped<UsuarioService>();
+builder.Services.AddScoped<EmpresaService>();
 
 builder.Services
     .AddIdentity<Usuario, IdentityRole>()
