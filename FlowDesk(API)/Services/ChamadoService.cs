@@ -16,7 +16,7 @@ namespace FlowDesk_API_.Services
             _context = context;
         }
 
-        public async Task<LerChamadoDto> PublicarChamado(CriarChamadoDto dto)
+        public async Task<LerChamadoDto> PublicarChamado(CriarChamadoDto dto, string clientId, Guid empresaId)
         {
             Chamado chamado = new Chamado
             {
@@ -24,7 +24,9 @@ namespace FlowDesk_API_.Services
                 Titulo = dto.Titulo,
                 Descricao = dto.Descricao,
                 CriadoEmUtc = DateTimeOffset.UtcNow,
-                PrioridadeChamado = dto.PrioridadeChamado
+                PrioridadeChamado = dto.PrioridadeChamado,
+                Clienteid = clientId,
+                EmpresaId = empresaId
             };
             _context.Add(chamado);
             await _context.SaveChangesAsync();
@@ -61,22 +63,9 @@ namespace FlowDesk_API_.Services
             };
         }
 
-        public async Task<LerChamadoDto> ListarChamadoPorEmpresa(Guid id)
+        public async Task<List<Chamado>> ListarChamadoPorEmpresa(Guid EmpresaId)
         {
-            Chamado? chamado = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == id);
-
-            if (chamado == null)
-            {
-                throw new Exception("Chamado nullo");
-            }
-
-            return new LerChamadoDto
-            {
-                Id = chamado.Id,
-                Titulo = chamado.Titulo,
-                Descricao = chamado.Descricao,
-                PrioridadeChamado = chamado.PrioridadeChamado
-            };
+            return await _context.Chamados.Where(c => c.EmpresaId == EmpresaId).ToListAsync();
         }
 
         public async Task<LerChamadoDto> AtribuirComentario(CriarComentarioDto dto, Guid id)
@@ -153,12 +142,13 @@ namespace FlowDesk_API_.Services
         public async Task<LerChamadoDto> AtribuirTecnico(AlterarChamadoDto dto, Guid id)
         {
             Chamado? chamado = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == id);
+            var tecnico = await _context.Users.FirstOrDefaultAsync(t => t.Id == dto.TecnicoResponsavelId);
 
-            if(chamado == null)
+            if (chamado == null)
             {
                 throw new Exception("Não foi possivel encontrar o chamado");
             }
-            if(chamado.TecnicoResponsavelId == null)
+            if(tecnico == null)
             {
                 throw new Exception("Não foi possivel encontrar o tecnico pesquisado");
             }

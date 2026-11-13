@@ -16,20 +16,19 @@ namespace FlowDesk_API_.Services
             _userManager = userManager;
         }
 
-        public string GenerateToken(Usuario usuario)
+        public async Task<string> GenerateToken(Usuario usuario)
         {
-            var roles = _userManager.GetRolesAsync(usuario).Result;
-            Claim[] claims = new Claim[]
+            var roles = await _userManager.GetRolesAsync(usuario);
+            List<Claim> claims = new List<Claim>
             {
                 new Claim("username", usuario.Nome),
                 new Claim("id", usuario.Id),
 
-                
             };
 
             foreach (var role in roles)
             {
-                new Claim(ClaimTypes.Role, role);
+                claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
             var chave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("eif349fre9ifr39i544y3f43h43eud4fr38934f9ir9"));

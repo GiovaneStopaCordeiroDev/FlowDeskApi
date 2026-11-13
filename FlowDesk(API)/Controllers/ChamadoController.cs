@@ -1,6 +1,8 @@
 ﻿using FlowDesk_API_.Dtos;
+using FlowDesk_API_.Modelos;
 using FlowDesk_API_.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlowDesk_API_.Controllers
@@ -11,17 +13,27 @@ namespace FlowDesk_API_.Controllers
     {
 
         private ChamadoService _service;
-
-        public ChamadoController(ChamadoService service)
+        private readonly UserManager<Usuario> _userManager;
+        public ChamadoController(ChamadoService service, UserManager<Usuario> userManager)
         {
             _service = service;
+            _userManager = userManager;
         }
 
-
+        [Authorize]
         [HttpPost("publicaChamado")]
         public async Task<IActionResult> PublicarChamado(CriarChamadoDto dto)
         {
-            var chamado = await _service.PublicarChamado(dto);
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user is null)
+                return Unauthorized();
+
+            if (user.EmpresaId is null)
+                return Forbid();
+
+            var chamado = await _service.PublicarChamado(dto, user.Id, user.EmpresaId.Value);
+
             return Created();
         }
 
@@ -43,9 +55,10 @@ namespace FlowDesk_API_.Controllers
 
         [Authorize]
         [HttpGet("listaChamadoPorEmpresa")]
-        public async Task<IActionResult> ListarChamadosPorEmpresa()
+        public async Task<IActionResult> ListarChamadosPorEmpresa(Guid EmpresaId)
         {
-            return Ok();
+            var listaChamados = await _service.ListarChamadoPorEmpresa(EmpresaId);
+            return Ok(listaChamados);
         }
 
         [Authorize]

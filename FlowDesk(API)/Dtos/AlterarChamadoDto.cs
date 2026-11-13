@@ -15,7 +15,7 @@ namespace FlowDesk_API_.Dtos
 
         public string? TecnicoResponsavelId { get; set; }
         public required string Descricao { get; set; }
-        public PrioridadeChamado PrioridadeChamado;
-        public StatusChamado StatusChamado = StatusChamado.Aberto;
+        public PrioridadeChamado PrioridadeChamado { get; set; }
+        public StatusChamado StatusChamado { get; set; } = StatusChamado.Aberto;
     }
 }
