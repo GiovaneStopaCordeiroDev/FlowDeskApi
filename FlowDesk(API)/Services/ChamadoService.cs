@@ -1,5 +1,6 @@
 ﻿using FlowDesk_API_.Context;
 using FlowDesk_API_.Dtos;
+using FlowDesk_API_.Exceptions;
 using FlowDesk_API_.Modelos;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -72,7 +73,7 @@ namespace FlowDesk_API_.Services
             return await _context.Chamados.Where(c => c.EmpresaId == EmpresaId).ToListAsync();
         }
 
-        public async Task<LerChamadoDto> AtribuirComentario(CriarComentarioDto dto, Guid id)
+        public async Task AtribuirComentario(CriarComentarioDto dto, Guid id,string usuarioId, bool ehGestor)
         {
             Chamado? chamado = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == id);
 
@@ -80,30 +81,17 @@ namespace FlowDesk_API_.Services
             {
                 throw new Exception("Chamado nullo");
             }
+            if (!ehGestor && chamado.TecnicoResponsavelId != usuarioId)
+                throw new AcessoChamadoNegadoException();
             var novoComentario = new Comentario
             {
                 Id = Guid.NewGuid(),
-                AutorId = dto.AutorId,
                 ConteudoComentario = dto.ConteudoComentario,
                 CriadoEmUtc = DateTimeOffset.UtcNow
             };
             chamado.Comentarios.Add(novoComentario);
             await _context.SaveChangesAsync();
 
-            return new LerChamadoDto
-            {
-                Id = chamado.Id,
-                Titulo = chamado.Titulo,
-                Descricao = chamado.Descricao,
-                PrioridadeChamado = chamado.PrioridadeChamado,
-                Comentarios = chamado.Comentarios.Select(c => new LerComentarioDto
-                {
-                    Id = c.Id,
-                    AutorId = c.AutorId,
-                    ConteudoComentario = c.ConteudoComentario,
-                    CriadoEmUtc = c.CriadoEmUtc
-                }).ToList()
-            };
         }
 
         public async Task DeletarChamado(Guid id)
@@ -128,8 +116,19 @@ namespace FlowDesk_API_.Services
             {
                 throw new Exception("Não foi possivel encontrar o chamado");
             }
+            if (!Enum.IsDefined(dto.StatusChamado))
+            {
+                throw new Exception("Status do chamado invalido");
+            }
+            if (chamado.StatusChamado is StatusChamado.Fechado
+                or StatusChamado.Cancelado)
+            {
+                throw new InvalidOperationException(
+                    "Não é possível alterar um chamado encerrado.");
+            }
 
             chamado.StatusChamado = dto.StatusChamado;
+          
             _context.Update(chamado);
 
             await _context.SaveChangesAsync();
@@ -146,16 +145,20 @@ namespace FlowDesk_API_.Services
         public async Task<LerChamadoDto> AtribuirTecnico(AtribuirTecnicoDto dto, Guid id)
         {
             Chamado? chamado = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == id);
-            var tecnico = await _context.Users.FirstOrDefaultAsync(t => t.Id == dto.TecnicoResponsavelId);
-            tecnico = await _userManager.IsInRoleAsync(tecnico, "Tecnico") ? tecnico : null;
-
             if (chamado == null)
             {
                 throw new Exception("Não foi possivel encontrar o chamado");
             }
+
+            Usuario? tecnico = await _context.Users.FirstOrDefaultAsync(t => t.Id == dto.TecnicoResponsavelId);
+          
             if(tecnico == null)
             {
                 throw new Exception("Não foi possivel encontrar o tecnico pesquisado");
+            }
+            if(!await _userManager.IsInRoleAsync(tecnico, "Tecnico"))
+            {
+                throw new Exceptions.UsuarioNaoTecnicoException();
             }
 
             chamado.TecnicoResponsavelId = dto.TecnicoResponsavelId; 

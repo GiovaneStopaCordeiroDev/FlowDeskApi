@@ -12,6 +12,6 @@
         public Usuario Autor { get; set; } = null!;
 
         public DateTimeOffset CriadoEmUtc { get; set; }
-       = DateTimeOffset.UtcNow;
+            = DateTimeOffset.UtcNow;
     }
 }

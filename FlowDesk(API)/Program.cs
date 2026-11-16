@@ -56,6 +56,20 @@ builder.Services.AddOpenApi(options =>
 var jwtSecret = builder.Configuration["Jwt:Secret"]
     ?? throw new InvalidOperationException("Configure a chave Jwt:Secret.");
 
+
+
+builder.Services.AddScoped<ChamadoService>();
+builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<UsuarioService>();
+builder.Services.AddScoped<EmpresaService>();
+
+builder.Services
+    .AddIdentity<Usuario, IdentityRole>()
+    .AddEntityFrameworkStores<FlowDeskContext>()
+    .AddDefaultTokenProviders();
+
+
 builder.Services.AddAuthentication(opts =>
 {
     opts.DefaultAuthenticateScheme =
@@ -75,18 +89,6 @@ builder.Services.AddAuthentication(opts =>
 
     };
 });
-
-
-builder.Services.AddScoped<ChamadoService>();
-builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<TokenService>();
-builder.Services.AddScoped<UsuarioService>();
-builder.Services.AddScoped<EmpresaService>();
-
-builder.Services
-    .AddIdentity<Usuario, IdentityRole>()
-    .AddEntityFrameworkStores<FlowDeskContext>()
-    .AddDefaultTokenProviders();
 
 
 var connectionString = builder.Configuration.GetConnectionString("FlowDeskConnection")

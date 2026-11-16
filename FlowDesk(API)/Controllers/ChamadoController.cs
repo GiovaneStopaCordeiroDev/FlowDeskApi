@@ -2,6 +2,7 @@
 using FlowDesk_API_.Modelos;
 using FlowDesk_API_.Services;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,7 +42,13 @@ namespace FlowDesk_API_.Controllers
         [HttpPost("adicionaComentario")]
         public async Task<IActionResult> AtribuirComentario(CriarComentarioDto dto, Guid id)
         {
-            var comentario = await _service.AtribuirComentario(dto, id);
+
+            string? usuarioId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if(usuarioId is null)
+                return Unauthorized();
+
+            var ehGestor = User.IsInRole("Gestor");
+             await _service.AtribuirComentario(dto, id, usuarioId, ehGestor);
             return Created();
         }
 
@@ -61,7 +68,7 @@ namespace FlowDesk_API_.Controllers
             return Ok(listaChamados);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Administrador,Gestor")]
         [HttpGet("{id}/listarporid")]
         public async Task<IActionResult> ListarChamadoPorId(Guid id)
         {
@@ -85,7 +92,7 @@ namespace FlowDesk_API_.Controllers
             return NoContent();
         }
 
-        [Authorize(Roles = "Gestor, Tecnico")]
+        [Authorize(Roles = "Gestor, Administrador")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletarChamado(Guid id)
         {

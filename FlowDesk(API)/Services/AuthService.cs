@@ -41,7 +41,7 @@ namespace FlowDesk_API_.Services
             {
                 return null;
             }
-            var resultado = await _signInManager.PasswordSignInAsync(usuario, dto.Senha, isPersistent:false, lockoutOnFailure: false);
+            var resultado = await _signInManager.CheckPasswordSignInAsync(usuario, dto.Senha, lockoutOnFailure: false);
 
             var encontrarUsuario = _signInManager.
                 UserManager.Users.FirstOrDefault(user => user.NormalizedUserName == dto.Nome.ToUpper());
