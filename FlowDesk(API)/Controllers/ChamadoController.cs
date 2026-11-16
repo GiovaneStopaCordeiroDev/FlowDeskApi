@@ -45,7 +45,7 @@ namespace FlowDesk_API_.Controllers
             return Created();
         }
 
-        [Authorize]
+        [Authorize(Roles = "Administrador,Gestor")]
         [HttpGet("listaChamado")]
         public async Task<IActionResult> ListarChamados()
         {
@@ -53,7 +53,7 @@ namespace FlowDesk_API_.Controllers
             return Ok(listaChamados);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Administrador,Gestor")]
         [HttpGet("listaChamadoPorEmpresa")]
         public async Task<IActionResult> ListarChamadosPorEmpresa(Guid EmpresaId)
         {
@@ -71,7 +71,7 @@ namespace FlowDesk_API_.Controllers
 
         [Authorize(Roles = "Gestor")]
         [HttpPatch("{id}/atribuir")]
-        public async Task<IActionResult> AtribuirTecnico(AlterarChamadoDto dto, Guid id)
+        public async Task<IActionResult> AtribuirTecnico(AtribuirTecnicoDto dto, Guid id)
         {
             var atribuirTecnico = await _service.AtribuirTecnico(dto, id);
             return Ok(atribuirTecnico);
@@ -79,7 +79,7 @@ namespace FlowDesk_API_.Controllers
 
         [Authorize(Roles = "Gestor")]
         [HttpPatch("{id}/status")]
-        public async Task<IActionResult> AlterarStatus(AlterarChamadoDto dto, Guid id)
+        public async Task<IActionResult> AlterarStatus(AlterarStatusDto dto, Guid id)
         {
             var alterarStatus = await _service.AlterarStatus(dto, id);
             return NoContent();
@@ -89,7 +89,7 @@ namespace FlowDesk_API_.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletarChamado(Guid id)
         {
-            var chamado = _service.DeletarChamado(id);
+           await _service.DeletarChamado(id);
             return NoContent();
         }
     }

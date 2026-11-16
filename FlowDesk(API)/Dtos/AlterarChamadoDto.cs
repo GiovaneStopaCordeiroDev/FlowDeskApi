@@ -8,13 +8,9 @@ namespace FlowDesk_API_.Dtos
     public class AlterarChamadoDto
     {
         public Guid Id { get; set; }
-
-        [Required(ErrorMessage = "Adicione um titulo para criar o chamado")]
-        public required string Titulo { get; set; }
-        [Required(ErrorMessage = "Adicione uma descrição para criar o chamado")]
-
+        public  string Titulo { get; set; } = string.Empty;
         public string? TecnicoResponsavelId { get; set; }
-        public required string Descricao { get; set; }
+        public  string Descricao { get; set; } = string.Empty;
         public PrioridadeChamado PrioridadeChamado { get; set; }
         public StatusChamado StatusChamado { get; set; } = StatusChamado.Aberto;
     }

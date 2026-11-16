@@ -22,7 +22,7 @@ namespace FlowDesk_API_.Services
             List<Claim> claims = new List<Claim>
             {
                 new Claim("username", usuario.Nome),
-                new Claim("id", usuario.Id),
+                new Claim(ClaimTypes.NameIdentifier, usuario.Id),
 
             };
 

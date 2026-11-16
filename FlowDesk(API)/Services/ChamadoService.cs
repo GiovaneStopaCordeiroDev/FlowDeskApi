@@ -1,6 +1,7 @@
 ﻿using FlowDesk_API_.Context;
 using FlowDesk_API_.Dtos;
 using FlowDesk_API_.Modelos;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using static FlowDesk_API_.Modelos.StatusChamadoEnum;
@@ -11,9 +12,11 @@ namespace FlowDesk_API_.Services
     {
 
         private FlowDeskContext _context;
-        public ChamadoService(FlowDeskContext context)
+        private readonly UserManager<Usuario> _userManager;
+        public ChamadoService(FlowDeskContext context, UserManager<Usuario> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         public async Task<LerChamadoDto> PublicarChamado(CriarChamadoDto dto, string clientId, Guid empresaId)
@@ -25,6 +28,7 @@ namespace FlowDesk_API_.Services
                 Descricao = dto.Descricao,
                 CriadoEmUtc = DateTimeOffset.UtcNow,
                 PrioridadeChamado = dto.PrioridadeChamado,
+                StatusChamado = StatusChamado.Aberto,
                 Clienteid = clientId,
                 EmpresaId = empresaId
             };
@@ -117,7 +121,7 @@ namespace FlowDesk_API_.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<LerChamadoDto> AlterarStatus(AlterarChamadoDto dto, Guid id)
+        public async Task<LerChamadoDto> AlterarStatus(AlterarStatusDto dto, Guid id)
         {
             Chamado? chamado = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == id);
             if (chamado == null)
@@ -139,10 +143,11 @@ namespace FlowDesk_API_.Services
             };
         }
 
-        public async Task<LerChamadoDto> AtribuirTecnico(AlterarChamadoDto dto, Guid id)
+        public async Task<LerChamadoDto> AtribuirTecnico(AtribuirTecnicoDto dto, Guid id)
         {
             Chamado? chamado = await _context.Chamados.FirstOrDefaultAsync(c => c.Id == id);
             var tecnico = await _context.Users.FirstOrDefaultAsync(t => t.Id == dto.TecnicoResponsavelId);
+            tecnico = await _userManager.IsInRoleAsync(tecnico, "Tecnico") ? tecnico : null;
 
             if (chamado == null)
             {

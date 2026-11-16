@@ -11,7 +11,7 @@ namespace FlowDesk_API_.Dtos
         public required string Titulo { get; set; }
         [Required(ErrorMessage = "Adicione uma descrição para criar o chamado")]
         public required string Descricao { get; set; }
-        public PrioridadeChamado PrioridadeChamado;
-        public StatusChamado StatusChamado = StatusChamado.Aberto;
+        public PrioridadeChamado PrioridadeChamado { get; set; }
+        public StatusChamado StatusChamado { get; set; } = StatusChamado.Aberto;
     }
 }

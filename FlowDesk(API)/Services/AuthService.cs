@@ -49,13 +49,13 @@ namespace FlowDesk_API_.Services
             {
                 return null;
             }
-            var token = _tokenService.GenerateToken(encontrarUsuario);
+
             if (!resultado.Succeeded)
             {
                 return null;
             }
 
-            return _tokenService.GenerateToken(usuario);
+            return await _tokenService.GenerateToken(usuario);
         }
 
        
